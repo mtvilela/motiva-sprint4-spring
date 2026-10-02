@@ -1,0 +1,515 @@
+{
+  "info": {
+    "name": "MOTIVA API - Sprint 4",
+    "description": "API REST de priorizacao de rocada (Spring Boot + JPA). Rode as pastas em ordem: os POSTs guardam o id criado nas variaveis da colecao (trechoId, equipeId, intervencaoId).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "trechoId",
+      "value": "1"
+    },
+    {
+      "key": "equipeId",
+      "value": "1"
+    },
+    {
+      "key": "intervencaoId",
+      "value": "1"
+    },
+    {
+      "key": "relatorioId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Trechos",
+      "item": [
+        {
+          "name": "Listar trechos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos"
+          }
+        },
+        {
+          "name": "Criar trecho UMIDO (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/trechos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"BR101-T\",\n  \"km\": 99.0,\n  \"alturaVegetacao\": 20.0,\n  \"diasSemRocada\": 5,\n  \"tipoTerreno\": \"UMIDO\",\n  \"idSensor\": \"IOT-999\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('trechoId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar por ID (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/{{trechoId}}"
+          }
+        },
+        {
+          "name": "Atualizar (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/trechos/{{trechoId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"BR101-T\",\n  \"km\": 99.0,\n  \"alturaVegetacao\": 22.0,\n  \"diasSemRocada\": 8,\n  \"tipoTerreno\": \"UMIDO\",\n  \"idSensor\": \"IOT-999-B\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Simular 10 dias de crescimento",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/{{trechoId}}/simular-crescimento?dias=10"
+          }
+        },
+        {
+          "name": "Filtro alturaMinima (derived query)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos?alturaMinima=40"
+          }
+        },
+        {
+          "name": "Filtro tipoTerreno (derived query)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos?tipoTerreno=UMIDO"
+          }
+        },
+        {
+          "name": "Trechos criticos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/criticos"
+          }
+        },
+        {
+          "name": "Buscar por codigo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/codigo/BR101-T"
+          }
+        },
+        {
+          "name": "Intervencoes do trecho",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/{{trechoId}}/intervencoes"
+          }
+        },
+        {
+          "name": "Buscar inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/999999"
+          }
+        },
+        {
+          "name": "Criar invalido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/trechos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"\",\n  \"km\": -1,\n  \"alturaVegetacao\": -5,\n  \"tipoTerreno\": \"UMIDO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Codigo duplicado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/trechos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"BR101-A\",\n  \"km\": 1,\n  \"alturaVegetacao\": 5,\n  \"tipoTerreno\": \"SECO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Equipes",
+      "item": [
+        {
+          "name": "Listar equipes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/equipes"
+          }
+        },
+        {
+          "name": "Criar equipe no trecho critico (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/equipes",
+            "description": "O trecho criado na pasta 1 fica CRITICO depois da simulacao de 10 dias.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Equipe Postman\",\n  \"trechoId\": {{trechoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('equipeId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Trecho nao critico (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/equipes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Equipe Invalida\",\n  \"trechoId\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/equipes/{{equipeId}}"
+          }
+        },
+        {
+          "name": "Equipes disponiveis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/equipes/disponiveis"
+          }
+        },
+        {
+          "name": "Filtro por nome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/equipes?nome=norte"
+          }
+        },
+        {
+          "name": "Atualizar (renomear e desassociar)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/equipes/{{equipeId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Equipe Postman - Plantao\",\n  \"trechoId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Intervencoes",
+      "item": [
+        {
+          "name": "Listar intervencoes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/intervencoes"
+          }
+        },
+        {
+          "name": "Registrar sem tipo: motor escolhe (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/intervencoes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trechoId\": {{trechoId}},\n  \"equipeId\": {{equipeId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('intervencaoId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtro por tipo (findByTipo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/intervencoes?tipo=MECANIZADA"
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/intervencoes/{{intervencaoId}}"
+          }
+        },
+        {
+          "name": "Corrigir registro (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/intervencoes/{{intervencaoId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"MECANIZADA\",\n  \"trechoId\": {{trechoId}},\n  \"equipeId\": {{equipeId}},\n  \"dataExecucao\": \"2026-10-01T08:00:00\",\n  \"alturaAntes\": 47.0,\n  \"alturaDepois\": 5.0,\n  \"descricao\": \"Conferido em campo.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Apagar trecho com intervencao (409)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/{{trechoId}}"
+          }
+        },
+        {
+          "name": "Remover intervencao (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/intervencoes/{{intervencaoId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Relatorios",
+      "item": [
+        {
+          "name": "Gerar relatorio (201)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/relatorios"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('relatorioId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historico",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/relatorios"
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/relatorios/{{relatorioId}}"
+          }
+        },
+        {
+          "name": "Consulta por periodo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/relatorios/periodo?inicio=2026-08-01&fim=2026-12-31"
+          }
+        },
+        {
+          "name": "Periodo invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/relatorios/periodo?inicio=2026-12-31&fim=2026-08-01"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Limpeza",
+      "item": [
+        {
+          "name": "Remover equipe (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/equipes/{{equipeId}}"
+          }
+        },
+        {
+          "name": "Remover trecho (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/{{trechoId}}"
+          }
+        },
+        {
+          "name": "Trecho removido (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/trechos/{{trechoId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
