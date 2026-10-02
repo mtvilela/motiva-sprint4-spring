@@ -1,0 +1,46 @@
+# ===== Build (Maven) =====
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+out/
+bin/
+build/
+*.class
+
+# ===== Credenciais =====
+# O .env guarda usuario/senha reais do Oracle e NUNCA vai para o Git.
+# Modelo versionado: .env.example
+.env
+*.env.local
+
+# ===== IntelliJ IDEA =====
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# ===== Eclipse / STS =====
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# ===== NetBeans =====
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ===== VS Code =====
+.vscode/
+
+# ===== Sistema / logs =====
+.DS_Store
+Thumbs.db
+*.log
+HELP.md
