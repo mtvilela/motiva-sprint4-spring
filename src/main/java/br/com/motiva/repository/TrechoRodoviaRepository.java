@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-// Sprint 3: TrechoRodoviaDAO (~165 linhas de SQL, PreparedStatement, ResultSet e mapear()).
+// Sprint 3: TrechoRodoviaDAO (~165 linhas de JDBC: SQL escrito a mao, parametros e mapear()).
 // Sprint 4: so esta INTERFACE. Quem escreve a implementacao e o Spring Data,
 // em tempo de execucao (um proxy criado na subida da aplicacao); o SQL e
 // gerado pelo Hibernate.
